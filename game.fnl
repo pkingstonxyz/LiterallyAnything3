@@ -1,50 +1,54 @@
-(local repl (require "lib.stdio"))
+(local fennel (require :lib.fennel))
+(local repl (require :lib.stdio))
+(local push (require :lib.push))
 
-; (global state {})
+;; setup mode switching infrastructure
+(var (mode mode-name) nil)
 
-; simple example printing "Hello World!"
-; use the arrow keys to move the label around
+(fn set-mode [new-mode-name ...]
+  ;(set mode (require new-mode-name))
+  ;(set mode-name new-mode-name)
+  (set (mode mode-name) (values (require new-mode-name) new-mode-name))
+  (when mode.activate
+    (match (pcall mode.activate ...)
+      (false msg) (print mode-name "activate error" msg))))
 
-(local (speed ball-speed) (values 10 200))
-(local state {:x 100 :y 100 :dx 2 :dy 1 :left 10 :right 10})
-(local (w h) (love.window.getMode))
+;; setup scaling resolution
+(push.setupScreen 135 240 {:upscale :normal})
 
-(local keys {:a [:left -1] :z [:left 1] :up [:right -1] :down [:right 1]})
+(fn love.resize [width height]
+  (push.resize width height))
 
-(fn on-paddle? []
-  (or (and (< state.x 20)
-           (< state.left state.y (+ state.left 100)))
-      (and (< (- w 20) state.x)
-           (< state.right state.y (+ state.right 100)))))
+(fn love.load [args]
+  (set-mode :mode-intro)
+  (when (not= :web (. args 1)) (repl.start))) ; Start repl when not on the web
 
-(fn love.load []
-  (repl.start)) ; this is important for the REPL to work
+;; Allows us to run modal callbacks without errors breaking the whole system
+(fn safely [f]
+  (xpcall f #(set-mode :error-mode mode-name $ (fennel.traceback))))
 
 (fn love.update [dt]
-  (set state.x (+ state.x (* state.dx dt ball-speed)))
-  (set state.y (+ state.y (* state.dy dt ball-speed)))
-  (each [key action (pairs keys)]
-    (let [[player dir] action]
-      (when (love.keyboard.isDown key)
-        (tset state player (+ (. state player) (* dir speed))))))
+  (when mode.update
+    (safely #(mode.update dt set-mode))))
 
-  (when (or (< state.y 0) (> state.y h))
-    (set state.dy (- 0 state.dy)))
-
-  (when (on-paddle?)
-    (set state.dx (- 0 state.dx)))
-
-  (when (< state.x 0)
-    (print "Right player wins")
-    (love.event.quit))
-  (when (> state.x w)
-    (print "Left player wins")
-    (love.event.quit)))
-
-(fn love.keypressed [key]
-  (when (= "escape" key) (love.event.quit)))
+;(fn love.keypressed [_key])
+(fn love.keyreleased [key code isrepeat]
+  (if (and (love.keyboard.isDown "lctrl" "rctrl" "capslock") (= key "q"))
+      (love.event.quit)
+      ;; add what each keypress should do in each mode
+      (not isrepeat)
+      (safely #(mode.keypressed key set-mode))))
 
 (fn love.draw []
-  (love.graphics.rectangle "fill" 10 state.left 10 100)
-  (love.graphics.rectangle "fill" (- w 10) state.right 10 100)
-  (love.graphics.circle "fill" state.x state.y 10))
+  (push.start)
+  (love.graphics.clear)
+  (safely mode.draw)
+  (love.graphics.setBackgroundColor 0.1 0.2 0.4)
+  (love.graphics.rectangle :fill 0 0 2 2)
+  (love.graphics.rectangle :fill 0 238 2 2)
+  (love.graphics.rectangle :fill 133 0 2 2)
+  (love.graphics.rectangle :fill 133 238 2 2)
+  ;(let [(ran result) (pcall customdraw)]
+  ;  (when (not ran)
+  ;    (print result)))
+  (push.finish))
