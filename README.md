@@ -10,7 +10,7 @@ the board to solve the puzzles!
 ### Aug 4 [ ]
 
  - [ ] Arrange for some music
- - [ ] Make level select menu
+ - [x] Make level select menu
  - [x] Make persistence format
  - [ ] Make board display
  - [ ] Make tile display

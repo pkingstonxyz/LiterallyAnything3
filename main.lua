@@ -13,7 +13,6 @@
 
 -- bootstrap the compiler (https://fennel-lang.org/setup#embedding-fennel)
 
-require("lib.lick")
 _G.fennel = require("lib.fennel")
 
 
