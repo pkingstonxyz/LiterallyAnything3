@@ -22,13 +22,9 @@
    (love.graphics.clear 0 0 0.1 1)
    (push.setCanvas :ui)
    (love.graphics.printf
-     "8402" titlefont 0 10 w :center)
+     "menu" textfont 0 10 w :center)
    (love.graphics.printf 
-     "2048, but upside down." textfont 0 200 w :center)
-   (love.graphics.printf 
-     "Slide tiles to unmerge them." textfont 0 250 w :center)
-   (love.graphics.printf 
-     "Press p to play" textfont 0 520 w :center))
+     "select a level" textfont 0 50 w :center))
  :update 
  (fn [dt _set-mode]
    (if (< counter 65535)
@@ -39,6 +35,4 @@
      (set time 0)
      (love.event.quit)))
  :keypressed 
- (fn [key set-mode]
-   (if (= key :p)
-     (set-mode :mode-menu)))}
+ (fn [key set-mode])}

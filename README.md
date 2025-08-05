@@ -11,12 +11,14 @@ the board to solve the puzzles!
 
  - [ ] Arrange for some music
  - [ ] Make level select menu
- - [ ] Make persistence format
- - [ ] Make board
+ - [x] Make persistence format
+ - [ ] Make board display
+ - [ ] Make tile display
 
 ### Aug 5 [ ]
 
- - [ ] Make tile logic & animation (& make board if still necessary)
+ - [ ] Make tile logic & animation
+ - [ ] Make board logic & animation
  - [ ] Make win logic
 
 ### Aug 6 [ ]
@@ -25,7 +27,7 @@ the board to solve the puzzles!
 
 ### Aug 7 [ ]
 
- - [ ] Make levels
+ - [ ] Make levels & Package
 
 ### Aug 8 [ ]
 
