@@ -12,11 +12,11 @@ the board to solve the puzzles!
  - [ ] Arrange for some music
  - [x] Make level select menu
  - [x] Make persistence format
- - [ ] Make board display
- - [ ] Make tile display
+ - [~] Make board display
 
 ### Aug 5 [ ]
 
+ - [ ] Make tile display
  - [ ] Make tile logic & animation
  - [ ] Make board logic & animation
  - [ ] Make win logic

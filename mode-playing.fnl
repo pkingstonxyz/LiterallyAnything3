@@ -13,17 +13,22 @@
 
 (var level "")
 
+(local board (require :board))
+
 {:activate 
- (fn [{: board : title}]
-   (pp board)
-   (set level title)
-   )
+ (fn [params]
+   (let [brd params.board
+         title params.title]
+     (pp brd)
+     (board:init brd)
+     (set level title)))
  :draw 
  (fn [_message]
    (local (w h) (push.getDimensions))
    (push.setCanvas :foreground)
-   (love.graphics.setColor 1 1 1 1)
+   ;(love.graphics.setColor 1 1 1 1)
    ;(love.graphics.rectangle :fill 80 120 640 400)
+   (board:draw)
    (push.setCanvas :ui)
    (love.graphics.printf
      level textfont 0 10 w :center)

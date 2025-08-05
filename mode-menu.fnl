@@ -16,7 +16,7 @@
 
 (local buttons [])
 (each [ind value (ipairs levels)]
-  (let [{: title} value
+  (let [{: title : board} value
         cellsize 100
         totalwidth 640 totalheight 400
         topx 80 topy 120
@@ -25,7 +25,7 @@
         row (math.floor (/ (- ind 1) rows))
         x (+ topx (* col cellsize))
         y (+ topy (* row cellsize))
-        btn (button:new {:xpos x :ypos y :width (- cellsize 10) :height (- cellsize 10) :message title})]
+        btn (button:new {:xpos x :ypos y :width (- cellsize 10) :height (- cellsize 10) :message title :board board})]
     (table.insert buttons btn)))
 
 {:activate 

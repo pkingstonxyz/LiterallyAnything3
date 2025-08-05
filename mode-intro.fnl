@@ -30,14 +30,7 @@
    (love.graphics.printf 
      "Press p to play" textfont 0 520 w :center))
  :update 
- (fn [dt _set-mode]
-   (if (< counter 65535)
-     (set counter (+ counter 1))
-     (set counter 0))
-   (set time (+ time dt))
-   (when (> time countdown-time)
-     (set time 0)
-     (love.event.quit)))
+ (fn [_dt _set-mode])
  :keypressed 
  (fn [key set-mode]
    (if (= key :p)
