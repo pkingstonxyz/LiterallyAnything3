@@ -7,22 +7,23 @@ the board to solve the puzzles!
 
 ## Planning
 
-### Aug 4 [ ]
+### Aug 4 [x]
 
  - [ ] Arrange for some music
  - [x] Make level select menu
  - [x] Make persistence format
  - [x] Make board display
 
-### Aug 5 [ ]
+### Aug 5 [x]
 
  - [x] Make tile display
- - [ ] Make tile logic & animation
- - [ ] Make board logic & animation
- - [ ] Make win logic
+ - [~] Make tile logic & animation
 
 ### Aug 6 [ ]
 
+ - [~] Make tile logic & animation
+ - [ ] Make board logic & animation
+ - [ ] Make win logic
  - [ ] Make levels
 
 ### Aug 7 [ ]
