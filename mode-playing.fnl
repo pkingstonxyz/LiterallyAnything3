@@ -16,28 +16,30 @@
 (local board (require :board))
 
 {:activate 
- (fn [params]
+ (fn activate [params]
    (let [brd params.board
          title params.title]
      (pp brd)
      (board:init brd)
      (set level title)))
  :draw 
- (fn [_message]
+ (fn draw [_message]
    (local (w h) (push.getDimensions))
    (push.setCanvas :foreground)
    ;(love.graphics.setColor 1 1 1 1)
    ;(love.graphics.rectangle :fill 80 120 640 400)
    (board:draw)
    (push.setCanvas :ui)
+   (love.graphics.setColor 1 1 1 1)
    (love.graphics.printf
      level textfont 0 10 w :center)
    (love.graphics.print
      "<- press m for menu" subtitlefont 0 0)
    )
  :update 
- (fn [dt set-mode])
+ (fn update [dt set-mode]
+   (board:update dt))
  :keypressed 
- (fn [key set-mode]
+ (fn keypressed [key set-mode]
    (if (= key :m)
      (set-mode :mode-menu)))}
