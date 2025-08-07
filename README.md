@@ -23,11 +23,13 @@ the board to solve the puzzles!
 
  - [x] Make tile logic & animation
  - [x] Make board logic & animation
- - [ ] Make win logic
+ - [x] Make win logic
  - [ ] Make levels
 
 ### Aug 7 [ ]
 
+ - [ ] Improve level importing
+ - [ ] Improve win screen
  - [ ] Make levels & Package
 
 ### Aug 8 [ ]

@@ -183,6 +183,18 @@
    (let [cells (self:order-cells direction)]
      (each [_ cell (ipairs cells)]
        (self:plan-and-move cell direction))))
+ :has-won?
+ (fn [self]
+   (var won? true)
+   (for [row 1 self.rows]
+     (for [col 1 self.cols]
+       (let [goaltile (. self :goal row col)
+             gridtile (. self :grid row col)]
+         (set won? (and won?
+                       (if (= (type goaltile) :table)
+                           (and (not= gridtile :mt) (not= gridtile :wall) (= (. gridtile :value) (. goaltile :value)))
+                           won?))))))
+   won?)
  :update
  (fn [self dt]
    ; Update input

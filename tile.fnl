@@ -102,7 +102,7 @@
      (set self.row row)
      (set self.col col)
      (set self.spawning-data
-          {:duration (* 6 Tile.base-move-duration)
+          {:duration Tile.base-move-duration
            :elapsed 0
            :scale 0}))
    :update
