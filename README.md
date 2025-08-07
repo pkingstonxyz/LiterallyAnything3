@@ -17,12 +17,12 @@ the board to solve the puzzles!
 ### Aug 5 [x]
 
  - [x] Make tile display
- - [~] Make tile logic & animation
+ - [x] Make tile logic & animation
 
 ### Aug 6 [ ]
 
- - [~] Make tile logic & animation
- - [ ] Make board logic & animation
+ - [x] Make tile logic & animation
+ - [x] Make board logic & animation
  - [ ] Make win logic
  - [ ] Make levels
 

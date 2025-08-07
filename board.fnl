@@ -25,6 +25,7 @@
  :board-size-ratio 0.8
  :init
  (fn [self board]
+   (print "=====MADE NEW BOARD======")
    (set self.grid [])
    (set self.goal [])
    (set self.rows (length board))
@@ -58,10 +59,7 @@
                (table.insert goalrow :wall)))))
        (table.insert self.goal goalrow)
        (table.insert self.grid gridrow)))
-   (print "GRID")
-   (pp self.grid)
-   (print "GOAl")
-   (pp self.goal))
+   )
  :get-bsize-and-coords
  (fn [self]
    (let [(wwidth wheight) (push.getDimensions)
@@ -91,16 +89,100 @@
            ;(print cell)
            (set all-idle? false)))))
    all-idle?)
+ :order-cells
+ (fn order-cells [self direction]
+   (local cells [])
+   (let [(row-start row-end row-inc
+          col-start col-end col-inc)
+         (case direction
+           :left  (values 1 self.rows 1
+                          1 self.cols 1)
+           :right (values 1 self.rows 1
+                          self.cols 1 -1)
+           :up    (values 1 self.rows 1
+                          1 self.cols 1)
+           :down  (values self.rows 1 -1
+                          1 self.cols 1))]
+     (for [row row-start row-end row-inc]
+       (for [col col-start col-end col-inc]
+         (let [cell (. self.grid row col)]
+           (when (= :table (type cell))
+             (table.insert cells cell)))))
+     cells))
+ :plan-and-move
+ (fn [self cell direction]
+  (let [
+        {: row : col : value} cell
+        
+    is-empty (fn [r c]
+      (and (>= r 1) (>= c 1)
+           (<= r self.rows)
+           (<= c self.cols)
+           (= (. self.grid r c) :mt)))
+
+    ; Find the final destination by sliding
+    [dr dc] (case direction
+              :up [-1 0]
+              :down [1 0]
+              :left [0 -1]
+              :right [0 1])
+
+    slide (fn slide [curr-r curr-c]
+            (let [
+              next-r (+ curr-r dr)
+              next-c (+ curr-c dc)]
+              (if (is-empty next-r next-c)
+                  (slide next-r next-c)
+                  [curr-r curr-c])))
+
+    [final-row final-col] (slide row col)
+
+    ; Calculate the coordinates for the split neighbor
+    split-neighbor-row (- final-row dr)
+    split-neighbor-col (- final-col dc)
+    
+    ; Check if that specific tile is empty
+    has-split-space (or (and (= split-neighbor-row row) (= split-neighbor-col col))
+                      (is-empty split-neighbor-row split-neighbor-col))
+
+    ; Do the plan
+    do-plan (fn [command]
+              (print "Doing plan:")
+              (pp command)
+              (case command
+                [:move cell targrow targcol]
+                (let [{: row : col} cell]
+                    (set (. self :grid row col) :mt)
+                    (set (. self :grid targrow targcol) cell)
+                    (cell:transition :moving targrow targcol))
+                [:split cell targrow targcol freerow freecol]
+                (let [{: row : col : value} cell
+                      targtile (tile:new row col (/ value 2))
+                      _ (targtile:transition :splitting-up targrow targcol)
+                      freetile (tile:new row col (/ value 2))
+                      _ (freetile:transition :splitting-up freerow freecol)]
+                  (set (. self :grid row col) :mt)
+                  (set (. self :grid targrow targcol) targtile)
+                  (set (. self :grid freerow freecol) freetile)
+                  )))]
+    
+    (print "Split-neighbs: " split-neighbor-row split-neighbor-col)
+    ; Main logic
+    (when (or (not= final-row row) (not= final-col col))
+      ;When there's enough room and:
+      (if (and (> value 2) has-split-space)
+        ; If value > 2 and there is enough room, split
+        (do-plan
+          [:split cell final-row final-col split-neighbor-row split-neighbor-col])
+        ; Otherwise, just move
+        (do-plan 
+          [:move cell final-row final-col])))))
+ 
  :move
  (fn [self direction]
-   (for [ri 1 self.rows]
-     (for [ci 1 self.cols]
-       (let [cell (. self.grid ri ci)]
-         (case cell
-           :wall :floor
-           :mt :bar
-           _ (cell:transition :moving 4 4)))))
-   (print "Moving! " direction))
+   (let [cells (self:order-cells direction)]
+     (each [_ cell (ipairs cells)]
+       (self:plan-and-move cell direction))))
  :update
  (fn [self dt]
    ; Update input

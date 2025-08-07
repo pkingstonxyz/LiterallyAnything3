@@ -12,20 +12,32 @@
        ;   512  {:light [0.94 0.55 0.00] :dark [0.77 0.91 0.77]}
        ;   1024 {:light [0.30 0.25 0.78] :dark [0.71 0.69 0.90]}
        ;   2048 {:light [1 1 1] :dark [0 0 0]}})
+;(local colorkey
+;  {2   {:light [0.95 0.98 0.99] :dark [0.24 0.45 0.60]}
+;   4   {:light [0.85 0.94 0.97] :dark [0.24 0.45 0.60]}
+;   8   {:light [0.70 0.88 0.92] :dark [0.00 0.00 0.00]}
+;   16  {:light [0.55 0.81 0.88] :dark [0.00 0.00 0.00]}
+;   32  {:light [0.40 0.74 0.83] :dark [0.00 0.00 0.00]}
+;   64  {:light [0.25 0.67 0.77] :dark [0.00 0.00 0.00]}
+;   128 {:light [0.65 0.55 0.75] :dark [1.00 1.00 1.00]}
+;   256 {:light [0.78 0.45 0.79] :dark [1.00 1.00 1.00]}
+;   512 {:light [0.89 0.35 0.78] :dark [1.00 1.00 1.00]}
+;   1024 {:light [0.96 0.25 0.75] :dark [1.00 1.00 1.00]}
+;   2048 {:light [0.99 0.90 0.95] :dark [0.60 0.24 0.45]}
+;   })
 (local colorkey
-  {2   {:light [0.95 0.98 0.99] :dark [0.24 0.45 0.60]}
-   4   {:light [0.85 0.94 0.97] :dark [0.24 0.45 0.60]}
-   8   {:light [0.70 0.88 0.92] :dark [0.00 0.00 0.00]}
-   16  {:light [0.55 0.81 0.88] :dark [0.00 0.00 0.00]}
-   32  {:light [0.40 0.74 0.83] :dark [0.00 0.00 0.00]}
-   64  {:light [0.25 0.67 0.77] :dark [0.00 0.00 0.00]}
-   128 {:light [0.65 0.55 0.75] :dark [1.00 1.00 1.00]}
-   256 {:light [0.78 0.45 0.79] :dark [1.00 1.00 1.00]}
-   512 {:light [0.89 0.35 0.78] :dark [1.00 1.00 1.00]}
-   1024 {:light [0.96 0.25 0.75] :dark [1.00 1.00 1.00]}
-   2048 {:light [0.99 0.90 0.95] :dark [0.60 0.24 0.45]}
+  {2   {:light [0.95 0.90 0.40] :dark [0.35 0.30 0.15]}
+   4   {:light [0.95 0.70 0.30] :dark [0.40 0.25 0.10]}
+   8   {:light [0.95 0.50 0.20] :dark [0.45 0.15 0.05]}
+   16  {:light [0.95 0.30 0.10] :dark [0.45 0.10 0.00]}
+   32  {:light [0.85 0.20 0.35] :dark [0.40 0.05 0.15]}
+   64  {:light [0.75 0.10 0.50] :dark [0.30 0.05 0.20]}
+   128 {:light [0.60 0.05 0.65] :dark [0.25 0.00 0.25]}
+   256 {:light [0.45 0.00 0.80] :dark [0.15 0.00 0.35]}
+   512 {:light [0.25 0.20 0.95] :dark [0.10 0.10 0.45]}
+   1024 {:light [0.10 0.35 0.95] :dark [0.05 0.15 0.45]}
+   2048 {:light [0.00 0.50 0.95] :dark [0.00 0.20 0.45]}
    })
-
 
 (local GoalTile
   {:new
@@ -34,7 +46,7 @@
            tile {:xpos xpos
                  :ypos ypos
                  :csize csize
-                 :val val
+                 :value val
                  :lightcolor (. colorkey val :light)
                  :darkcolor (. colorkey val :dark)}]
        (setmetatable tile {:__index self})
@@ -46,7 +58,7 @@
        (love.graphics.setColor lr lg lb 0.6)
        (love.graphics.rectangle :fill self.xpos self.ypos self.csize self.csize)
        (love.graphics.setColor dr dg db 1)
-       (love.graphics.print self.val self.xpos self.ypos)
+       (love.graphics.print self.value self.xpos self.ypos)
        ))})
 
 (local Tile 
@@ -131,7 +143,11 @@
    (fn [self board]
      (let [{: row : col : value} self
            (cx cy csize) (board:get-cell-coords-and-size row col)]
-       (love.graphics.setColor (. colorkey value :dark))
+       (if (= value (. board :goal row col :value))
+        (love.graphics.setColor [1 1 1 1])
+        (love.graphics.setColor (. colorkey value :dark))
+         )
+       ;(love.graphics.setColor (. colorkey value :dark))
        (love.graphics.setLineWidth 5)
        (love.graphics.rectangle :line cx cy csize csize)
        (love.graphics.setColor (. colorkey value :light))
@@ -197,5 +213,55 @@
        ;(pp self)
      ))
    })
+
+(set
+  Tile.splitting-up
+  {:entry
+    (fn [self targrow targcol]
+      (set self.mode :splitting-up)
+      (let [origrow self.row
+            origcol self.col]
+        (set self.row targrow)
+        (set self.col targcol)
+        (set self.splitting-data
+          {:origrow origrow
+           :origcol origcol
+           :intermediaterow origrow
+           :intermediatecol origcol
+           :duration Tile.base-move-duration
+           :elapsed 0
+           :scale 0})))
+  :update
+  (fn [self dt]
+    (set self.splitting-data.elapsed (+ self.splitting-data.elapsed dt))
+    (let [progress (/ self.splitting-data.elapsed self.splitting-data.duration)
+          origrow self.splitting-data.origrow
+          origcol self.splitting-data.origcol
+          targrow self.row
+          targcol self.col
+          nextintermediaterow (+ origrow (* (- targrow origrow) progress))
+          nextintermediatecol (+ origcol (* (- targcol origcol) progress))]
+      (set self.splitting-data.intermediaterow nextintermediaterow)
+      (set self.splitting-data.intermediatecol nextintermediatecol)
+      (set self.splitting-data.scale progress)
+      (when (<= 1.0 progress)
+        (set self.splitting-data {})
+        (self:transition :idle self.row self.col))))
+  :draw
+  (fn [self board]
+    (let [{: value} self
+          {: intermediaterow : intermediatecol : scale} self.splitting-data
+          (cx cy csize) (board:get-cell-coords-and-size intermediaterow intermediatecol)
+          new-csize (* csize scale)
+          cx (- cx (/ (- new-csize csize) 2))
+          cy (- cy (/ (- new-csize csize) 2))]
+      (love.graphics.setColor (. colorkey value :dark))
+      (love.graphics.setLineWidth 5)
+      (love.graphics.rectangle :line cx cy new-csize new-csize)
+      (love.graphics.setColor (. colorkey value :light))
+      (love.graphics.rectangle :fill cx cy new-csize new-csize)
+      (when (> scale 0.3)
+        (love.graphics.setColor (. colorkey value :dark))
+        (love.graphics.print value cx cy))))})
    
 Tile
