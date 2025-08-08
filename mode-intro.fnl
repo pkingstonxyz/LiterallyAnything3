@@ -3,9 +3,10 @@
 (var counter 0)
 (var time 0)
 
-(love.graphics.setNewFont 15)
-(local titlefont (love.graphics.newFont 150))
-(local textfont (love.graphics.newFont 40))
+(local globals (require :globals))
+
+(local titlefont globals.titlefont)
+(local textfont globals.textfont)
 
 (local (major minor revision) (love.getVersion))
 (local fennel (require :lib.fennel))
@@ -17,10 +18,10 @@
  (fn [_message]
    (local (w h) (push.getDimensions))
    (push.setCanvas :foreground)
+   (love.graphics.clear globals.bgcolor)
    ; TODO: Add a simple unmerge example.
    (push.setCanvas :ui)
-   (love.graphics.clear 0 0 0.1 1)
-   (push.setCanvas :ui)
+   ;(love.graphics.setColor 0.13 0.13 0.23 1)
    (love.graphics.printf
      "8402" titlefont 0 10 w :center)
    (love.graphics.printf 

@@ -1,12 +1,9 @@
 (local push (require :lib.push))
-(local countdown-time 60)
-(var counter 0)
-(var time 0)
 
-(love.graphics.setNewFont 15)
-(local _titlefont (love.graphics.newFont 150))
-(local textfont (love.graphics.newFont 40))
-(local subtitlefont (love.graphics.newFont 20))
+(local globals (require :globals))
+
+(local textfont globals.textfont)
+(local subtitlefont globals.subtitlefont)
 
 (local fennel (require :lib.fennel))
 (fn pp [x] (print (fennel.view x)))
@@ -25,7 +22,7 @@
         row (math.floor (/ (- ind 1) rows))
         x (+ topx (* col cellsize))
         y (+ topy (* row cellsize))
-        btn (button:new {:xpos x :ypos y :width (- cellsize 10) :height (- cellsize 10) :message title :board board})]
+        btn (button:new {:xpos x :ypos y :width (- cellsize 10) :height (- cellsize 10) :message title :board board :colorA [1 1 1 1] :colorB globals.bgcolor})]
     (table.insert buttons btn)))
 
 {:activate 
@@ -34,7 +31,7 @@
  (fn [_message]
    (local (w h) (push.getDimensions))
    (push.setCanvas :foreground)
-   (love.graphics.setColor 1 1 1 1)
+   (love.graphics.clear globals.bgcolor)
    (each [_idx btn (ipairs buttons)]
      (btn:draw))
    ;(love.graphics.rectangle :fill 80 120 640 400)

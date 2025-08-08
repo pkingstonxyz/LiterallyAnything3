@@ -25,6 +25,11 @@
 ;   1024 {:light [0.96 0.25 0.75] :dark [1.00 1.00 1.00]}
 ;   2048 {:light [0.99 0.90 0.95] :dark [0.60 0.24 0.45]}
 ;   })
+
+(local globals (require :globals))
+
+(local tilefont globals.tilefont)
+
 (local colorkey
   {2   {:light [0.95 0.90 0.40] :dark [0.35 0.30 0.15]}
    4   {:light [0.95 0.70 0.30] :dark [0.40 0.25 0.10]}
@@ -58,7 +63,7 @@
        (love.graphics.setColor lr lg lb 0.6)
        (love.graphics.rectangle :fill self.xpos self.ypos self.csize self.csize)
        (love.graphics.setColor dr dg db 1)
-       (love.graphics.print self.value self.xpos self.ypos)
+       (love.graphics.print self.value tilefont self.xpos self.ypos)
        ))})
 
 (local Tile 
@@ -127,7 +132,7 @@
        (love.graphics.rectangle :fill cx cy new-csize new-csize)
        (when (> self.spawning-data.scale 0.3)
          (love.graphics.setColor (. colorkey value :dark))
-         (love.graphics.print value cx cy))))})
+         (love.graphics.print value tilefont cx cy))))})
 
 (set
   Tile.idle
@@ -153,7 +158,7 @@
        (love.graphics.setColor (. colorkey value :light))
        (love.graphics.rectangle :fill cx cy csize csize)
        (love.graphics.setColor (. colorkey value :dark))
-       (love.graphics.print value cx cy)))})
+       (love.graphics.print value tilefont cx cy)))})
 
 (set
   Tile.moving
@@ -209,7 +214,7 @@
        (love.graphics.setColor (. colorkey value :light))
        (love.graphics.rectangle :fill cx cy csize csize)
        (love.graphics.setColor (. colorkey value :dark))
-       (love.graphics.print value cx cy)
+       (love.graphics.print value tilefont cx cy)
        ;(pp self)
      ))
    })
@@ -262,6 +267,6 @@
       (love.graphics.rectangle :fill cx cy new-csize new-csize)
       (when (> scale 0.3)
         (love.graphics.setColor (. colorkey value :dark))
-        (love.graphics.print value cx cy))))})
+        (love.graphics.print value tilefont cx cy))))})
    
 Tile

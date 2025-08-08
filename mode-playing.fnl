@@ -3,10 +3,10 @@
 (var counter 0)
 (var time 0)
 
-(love.graphics.setNewFont 15)
-(local _titlefont (love.graphics.newFont 150))
-(local textfont (love.graphics.newFont 40))
-(local subtitlefont (love.graphics.newFont 20))
+(local globals (require :globals))
+
+(local textfont globals.textfont)
+(local subtitlefont globals.subtitlefont)
 
 (local fennel (require :lib.fennel))
 (fn pp [x] (print (fennel.view x)))
@@ -27,7 +27,8 @@
  (fn draw [_message]
    (local (w h) (push.getDimensions))
    (push.setCanvas :foreground)
-   ;(love.graphics.setColor 1 1 1 1)
+   (love.graphics.clear globals.bgcolor)
+   (love.graphics.setColor 1 1 1 1)
    ;(love.graphics.rectangle :fill 80 120 640 400)
    (board:draw)
    (push.setCanvas :ui)

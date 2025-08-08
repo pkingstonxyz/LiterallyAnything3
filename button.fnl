@@ -1,5 +1,9 @@
 (local push (require :lib.push))
 
+(local globals (require :globals))
+
+(local tilefont globals.tilefont)
+
 (local
   button-prototype
   {:pressed false
@@ -43,7 +47,7 @@
      (love.graphics.rectangle :fill self.xpos self.ypos self.width self.height)
      (love.graphics.setColor (if self.pressed self.colorB self.colorA))
      (love.graphics.rectangle :line self.xpos self.ypos self.width self.height)
-     (love.graphics.print self.message (+ self.xpos 10) (+ self.ypos 10))
+     (love.graphics.print self.message tilefont (+ self.xpos 10) (+ self.ypos 10))
      (love.graphics.setColor self.colorA))})
 
 button-prototype

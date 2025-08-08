@@ -9,7 +9,7 @@ the board to solve the puzzles!
 
 ### Aug 4 [x]
 
- - [ ] Arrange for some music
+ - [x] Arrange for some music
  - [x] Make level select menu
  - [x] Make persistence format
  - [x] Make board display
@@ -19,12 +19,11 @@ the board to solve the puzzles!
  - [x] Make tile display
  - [x] Make tile logic & animation
 
-### Aug 6 [ ]
+### Aug 6 [x]
 
  - [x] Make tile logic & animation
  - [x] Make board logic & animation
  - [x] Make win logic
- - [ ] Make levels
 
 ### Aug 7 [ ]
 
