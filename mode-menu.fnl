@@ -15,11 +15,11 @@
 (each [ind value (ipairs levels)]
   (let [{: title : board} value
         cellsize 100
-        totalwidth 640 totalheight 400
+        totalwidth 640
         topx 80 topy 120
-        rows (/ totalheight cellsize) cols (/ totalwidth cellsize)
+        cols (math.floor (/ totalwidth cellsize))
         col (math.fmod (- ind 1) cols)
-        row (math.floor (/ (- ind 1) rows))
+        row (math.floor (/ (- ind 1) cols))
         x (+ topx (* col cellsize))
         y (+ topy (* row cellsize))
         btn (button:new {:xpos x :ypos y :width (- cellsize 10) :height (- cellsize 10) :message title :board board :colorA [1 1 1 1] :colorB globals.bgcolor})]

@@ -27,8 +27,7 @@ the board to solve the puzzles!
 
 ### Aug 7 [ ]
 
- - [ ] Improve level importing
- - [ ] Improve win screen
+ - [x] Improve win screen
  - [ ] Make levels & Package
 
 ### Aug 8 [ ]
